@@ -8,11 +8,11 @@
     )
 </CFQUERY>
 <CFQUERY datasource="cfml_test" name="insert_table_list_activity">
-    INSERT INTO cfml_test.dbo.list_acivity (name) VALUES (N'Назначение');
-    INSERT INTO cfml_test.dbo.list_acivity (name) VALUES (N'Решение');
-    INSERT INTO cfml_test.dbo.list_acivity (name) VALUES (N'Проверка');
-    INSERT INTO cfml_test.dbo.list_acivity (name) VALUES (N'Переоткрытие');
-    INSERT INTO cfml_test.dbo.list_acivity (name) VALUES (N'Закрытие');
+    INSERT INTO cfml_test.dbo.list_activity (name) VALUES (N'Назначение');
+    INSERT INTO cfml_test.dbo.list_activity (name) VALUES (N'Решение');
+    INSERT INTO cfml_test.dbo.list_activity (name) VALUES (N'Проверка');
+    INSERT INTO cfml_test.dbo.list_activity (name) VALUES (N'Переоткрытие');
+    INSERT INTO cfml_test.dbo.list_activity (name) VALUES (N'Закрытие');
 </CFQUERY>
 
 <CFQUERY datasource="cfml_test" name="create_table_list_criticality">
@@ -58,11 +58,10 @@
     )
 </CFQUERY>
 <CFQUERY datasource="cfml_test" name="insert_table_list_urgently">
-    INSERT INTO cfml_test.dbo.list_status (name) VALUES (N'Новая');
-    INSERT INTO cfml_test.dbo.list_status (name) VALUES (N'Открытая');
-    INSERT INTO cfml_test.dbo.list_status (name) VALUES (N'Решенная');
-    INSERT INTO cfml_test.dbo.list_status (name) VALUES (N'Проверенная');
-    INSERT INTO cfml_test.dbo.list_status (name) VALUES (N'Закрытая');
+    INSERT INTO cfml_test.dbo.list_urgently (name) VALUES (N'Очень срочно');
+    INSERT INTO cfml_test.dbo.list_urgently (name) VALUES (N'Срочно');
+    INSERT INTO cfml_test.dbo.list_urgently (name) VALUES (N'Несрочно');
+    INSERT INTO cfml_test.dbo.list_urgently (name) VALUES (N'Совсем несрочно');
 </CFQUERY>
 
 <CFQUERY datasource="cfml_test" name="create_table_list_activity_to_status">
@@ -73,8 +72,8 @@
     constraint list_activity_to_status_list_status_id_fk
     references list_status,
     activity_id       int not null
-    constraint list_activity_to_status_list_acivity_id_fk
-    references list_acivity,
+    constraint list_activity_to_status_list_activity_id_fk
+    references list_activity,
     set_status_id     int not null
     constraint list_activity_to_status_list_status_id_fk_2
     references list_status
@@ -117,8 +116,6 @@
     constraint errors_users_id_fk
     references users,
     status_id         int                        not null
-    constraint errors_list_criticality_id_fk
-    references list_criticality
     constraint errors_list_status_id_fk
     references list_status,
     urgently_id       int                        not null
@@ -132,7 +129,7 @@
     )
 </CFQUERY>
 <CFQUERY datasource="cfml_test" name="insert_table_errors">
-    INSERT INTO cfml_test.dbo.errors (description_short, description_full, user_id, status_id, urgently_id, criticality_id, date_create, date_edit) VALUES (N'Короткое описание', N'Длинное описание', 1, 5, 3, 1, N'2024-02-18 16:47:40.110', N'2024-02-18 18:23:41.143');
+    INSERT INTO cfml_test.dbo.errors (description_short, description_full, user_id, status_id, urgently_id, criticality_id, date_create, date_edit) VALUES (N'Короткое описание', N'Длинное описание', 1, 5, 3, 1, getdate(), getdate());
 </CFQUERY>
 
 <CFQUERY datasource="cfml_test" name="create_table_error_set_status">
@@ -142,12 +139,10 @@
     constraint error_set_status_pk
     primary key,
     activity_id int                        not null
-    constraint error_set_status_list_acivity_id_fk
-    references list_acivity,
+    constraint error_set_status_list_activity_id_fk
+    references list_activity,
     comment     varchar(max),
     user_id     int                        not null
-    constraint error_set_status_list_acivity_id_fk
-    references list_acivity
     constraint error_set_status_users_id_fk
     references users,
     date_create datetime default getdate() not null,
@@ -158,10 +153,14 @@
     )
 </CFQUERY>
 <CFQUERY datasource="cfml_test" name="insert_table_error_set_status">
-    INSERT INTO cfml_test.dbo.error_set_status (activity_id, comment, user_id, date_create, error_id, date_edit) VALUES (1, N'Назначили на исполнителя', 1, N'2024-02-18 18:26:49.630', 1, N'2024-02-18 18:26:49.630');
-    INSERT INTO cfml_test.dbo.error_set_status (activity_id, comment, user_id, date_create, error_id, date_edit) VALUES (2, N'Исполнитель решил', 1, N'2024-02-18 18:26:59.390', 1, N'2024-02-18 18:26:59.390');
-    INSERT INTO cfml_test.dbo.error_set_status (activity_id, comment, user_id, date_create, error_id, date_edit) VALUES (4, N'Исполнитель плохо решил', 1, N'2024-02-18 18:27:09.700', 1, N'2024-02-18 18:27:09.700');
-    INSERT INTO cfml_test.dbo.error_set_status (activity_id, comment, user_id, date_create, error_id, date_edit) VALUES (2, N'Теперь хорошо', 1, N'2024-02-18 18:27:21.697', 1, N'2024-02-18 18:27:21.697');
-    INSERT INTO cfml_test.dbo.error_set_status (activity_id, comment, user_id, date_create, error_id, date_edit) VALUES (3, N'Точно хорошо', 1, N'2024-02-18 18:27:29.737', 1, N'2024-02-18 18:27:29.737');
-    INSERT INTO cfml_test.dbo.error_set_status (activity_id, comment, user_id, date_create, error_id, date_edit) VALUES (5, N'Закрываем', 1, N'2024-02-18 18:27:38.870', 1, N'2024-02-18 18:27:38.870');
+    INSERT INTO cfml_test.dbo.error_set_status (activity_id, comment, user_id, date_create, error_id, date_edit) VALUES (1, N'Назначили на исполнителя', 1, getdate(), 1, getdate());
+    INSERT INTO cfml_test.dbo.error_set_status (activity_id, comment, user_id, date_create, error_id, date_edit) VALUES (2, N'Исполнитель решил', 1, getdate(), 1, getdate());
+    INSERT INTO cfml_test.dbo.error_set_status (activity_id, comment, user_id, date_create, error_id, date_edit) VALUES (4, N'Исполнитель плохо решил', 1, getdate(), 1, getdate());
+    INSERT INTO cfml_test.dbo.error_set_status (activity_id, comment, user_id, date_create, error_id, date_edit) VALUES (2, N'Теперь хорошо', 1, getdate(), 1, getdate());
+    INSERT INTO cfml_test.dbo.error_set_status (activity_id, comment, user_id, date_create, error_id, date_edit) VALUES (3, N'Точно хорошо', 1, getdate(), 1, getdate());
+    INSERT INTO cfml_test.dbo.error_set_status (activity_id, comment, user_id, date_create, error_id, date_edit) VALUES (5, N'Закрываем', 1, getdate(), 1, getdate());
 </CFQUERY>
+
+<CFOUTPUT>
+    <script>location.reload()</script>
+</CFOUTPUT>
