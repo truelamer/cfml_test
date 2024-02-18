@@ -1,0 +1,1 @@
+<CFSET StructClear(Session)>
